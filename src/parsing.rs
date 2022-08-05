@@ -2,7 +2,7 @@ use crate::lexeme::Token;
 
 #[derive(Debug)]
 pub enum Expression {
-    Number(f64),
+    Number(String),
     Unary { op: Token, expr: Box<Expression> },
     Binary { op: Token, left: Box<Expression>, right: Box<Expression> },
 }
@@ -15,7 +15,7 @@ pub struct Parser {
 
 impl Parser {
     pub fn new(token_stream: Vec<Token>) -> Self {
-        Self { position: 0, token_stream: token_stream.clone(), current_token: token_stream[0] }
+        Self { position: 0, token_stream: token_stream.clone(), current_token: token_stream[0].clone() }
     }
 
     pub fn parse(&mut self) -> Expression { self.expr() }
@@ -23,7 +23,7 @@ impl Parser {
     fn next_token(&mut self) {
         self.position += 1;
         if self.position < self.token_stream.len() {
-            self.current_token = self.token_stream[self.position];
+            self.current_token = self.token_stream[self.position].clone();
         }
     }
 
@@ -37,7 +37,7 @@ impl Parser {
     }
 
     fn factor(&mut self) -> Expression {
-        let token = self.current_token;
+        let token = self.current_token.clone();
         match token {
             Token::OpenParenthesis => {
                 self.eat(Token::OpenParenthesis);
@@ -46,11 +46,11 @@ impl Parser {
                 elem
             },
             Token::Number(n) => {
-                self.eat(token);
+                self.eat(Token::Number(String::new()));
                 Expression::Number(n)
             },
             Token::Plus | Token::Minus => {
-                self.eat(token);
+                self.eat(token.clone());
                 Expression::Unary { op: token, expr: Box::new(self.factor()) }
             },
             _ => panic!("Wrong in factor")
@@ -64,8 +64,8 @@ impl Parser {
             _ => false
         }
         {  // repeat
-            let token = self.current_token;
-            self.eat(token);
+            let token = self.current_token.clone();
+            self.eat(token.clone());
             node = Expression::Binary {
                 op: token,
                 left: Box::new(node),
@@ -82,8 +82,8 @@ impl Parser {
             _ => false
         }
         {  // repeat
-            let token = self.current_token;
-            self.eat(token);
+            let token = self.current_token.clone();
+            self.eat(token.clone());
             node = Expression::Binary {
                 op: token,
                 left: Box::new(node),

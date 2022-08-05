@@ -1,4 +1,4 @@
-use std::{ops::{Add, Sub, Neg, Mul, Div}, fmt::Display};
+use std::{ops::{Add, Sub, Neg, Mul, Div}, fmt::Display, cmp::max};
 
 #[derive(Debug)]
 pub struct Decimal {
@@ -24,30 +24,32 @@ impl Decimal {
     }
 }
 
-impl From<f64> for Decimal {
-    fn from(num: f64) -> Self {
-        let num_string = num.to_string();
+impl From<String> for Decimal {
+    fn from(num_string: String) -> Self {
         let num_vec: Vec<&str> = num_string.split('.').collect();
-        let int = if num_vec.len() == 1 { num_vec[0].parse().unwrap() }
-            else { (num_vec[0].to_string() + num_vec[1]).parse().unwrap() };
-        if int == 0 { return Decimal::zero();}
-        let multi = (int as f64) / num;
-        let mut ten_times = 0;
-        loop {
-            let tenfold = 10_i32.pow(ten_times);
-            ten_times += 1;
-            if tenfold == multi as i32 { break; }
+        let int: i128; let point: u8;
+        if num_vec.len() == 1 {
+            int = num_vec[0].parse().unwrap();
+            point = 0;
         }
-        let point = ten_times as u8 - 1;
+        else {
+            int = (num_vec[0].to_string() + num_vec[1]).parse().unwrap();
+            point = num_vec[1].len() as u8;
+        };
+        if int == 0 { return Decimal::zero(); }
         Decimal { int, point }
     }
 }
 
 #[test]
 fn test_decimal_from() {
-    let dec = Decimal::from(0.); println!("{:?}\n{0}\n", &dec);
-    let dec = Decimal::from(1.); println!("{:?}\n{0}\n", &dec);
-    let dec = Decimal::from(1.14514); println!("{:?}\n{0}\n", &dec);
+    let examples = vec![
+        0.0, 1.0, 1.14514, 2.333,
+    ];
+    for example in examples {
+        let dec = Decimal::from(example.to_string());
+        println!("{:?}\n{0}\n", &dec);
+    }
 }
 
 impl Display for Decimal {
@@ -151,7 +153,7 @@ impl Mul for Decimal {
     type Output = Self;
     fn mul(self, rhs: Self) -> Self::Output {
         let int = self.int * rhs.int;
-        let point = if self.is_integer() && rhs.is_integer() { 0 }
+        let point = if self.is_integer() || rhs.is_integer() { max(self.point, rhs.point) }
             else { self.point * rhs.point + 1 };
         Decimal { int, point }
     }
@@ -160,11 +162,15 @@ impl Mul for Decimal {
 #[test]
 fn test_decimal_mul() {
     let examples = vec![
+        /*
         Decimal::_new(11, 1) * Decimal::_new(2, 0),
         Decimal::_new(114, 2) * Decimal::_new(1, 1),
         Decimal::_new(233, 3) * Decimal::_new(0, 1),
         Decimal::_new(4, 1) * Decimal::_new(5, 0),
         Decimal::_new(233, 0) * Decimal::_new(10, 0),
+        */
+        // Decimal::_new(2333, 3) * Decimal::_new(10, 0),
+        Decimal::from(10.to_string()) * Decimal::from(2.333.to_string()),
     ];
     for example in examples {
         println!("Result: {}", &example);
@@ -195,25 +201,23 @@ impl Div for Decimal {
 
 #[test]
 fn test_decimal_div() {
-    let _result = Decimal::from(1.14) / Decimal::from(10.); println!("{}", _result);
-    let _result = Decimal::from(23.3) / Decimal::from(0.1); println!("{}", _result);
-    let _result = Decimal::from(2333.) / Decimal::from(0.2); println!("{}", _result);
+    let _result = Decimal::from(1.14.to_string()) / Decimal::from(10.to_string()); println!("{}", _result);
+    let _result = Decimal::from(23.3.to_string()) / Decimal::from(0.1.to_string()); println!("{}", _result);
+    let _result = Decimal::from(2333.to_string()) / Decimal::from(0.2.to_string()); println!("{}", _result);
 }
 
 #[test]
 #[should_panic]
 fn test_decimal_div_zero() {
-    let _result = Decimal::from(1.) / Decimal::from(0.); println!("{}", _result);
+    let _result = Decimal::from(1.to_string()) / Decimal::from(0.to_string()); println!("{}", _result);
 }
 
 #[test]
 fn test_decimal() {
     let examples = vec![
-        Decimal::from(0.1) + Decimal::from(0.1) + Decimal::from(0.1),
+        Decimal::from(0.1.to_string()) + Decimal::from(0.1.to_string()) + Decimal::from(0.1.to_string()),
     ];
     for example in examples {
         println!("Result: {}", &example);
     }
-
-    println!("{}", 1_f64 / 0_f64);
 }

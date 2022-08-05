@@ -1,9 +1,9 @@
 const END: char = '\0';
 
 #[derive(Debug)]
-#[derive(Clone, Copy)]
+#[derive(Clone)]
 pub enum Token {
-    Number(f64),
+    Number(String),
     Plus, Minus, Multiply, Divide,
     OpenParenthesis, CloseParenthesis,
     Fin
@@ -20,9 +20,9 @@ impl PartialEq for Token {
 
 #[test]
 fn test_token_partial_eq() {
-    assert_eq!(Token::Number(0.0), Token::Number(0.0));
-    assert!(Token::Number(114.514) == Token::Number(233.3));
-    assert_ne!(Token::Number(0.0), Token::Fin);
+    assert_eq!(Token::Number(0.0.to_string()), Token::Number(0.0.to_string()));
+    assert!(Token::Number(114.514.to_string()) == Token::Number(233.3.to_string()));
+    assert_ne!(Token::Number(0.0.to_string()), Token::Fin);
 }
 
 #[derive(Debug)]
@@ -96,13 +96,13 @@ impl Tokenizer {
         Token::Fin
     }
 
-    fn read_number(&mut self) -> f64 {
+    fn read_number(&mut self) -> String {
         let mut result = String::new();
         while self.ch != END && is_digit(&self.ch) {
             result += &self.ch.to_string();
             self.advance();
         }
-        result.parse::<f64>().unwrap()
+        result
     }
 }
 
