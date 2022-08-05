@@ -39,10 +39,10 @@ impl Parser {
     fn factor(&mut self) -> Expression {
         let token = self.current_token;
         match token {
-            Token::LeftParenthesis => {
-                self.eat(Token::LeftParenthesis);
+            Token::OpenParenthesis => {
+                self.eat(Token::OpenParenthesis);
                 let elem = self.expr();
-                self.eat(Token::RightParenthesis);
+                self.eat(Token::CloseParenthesis);
                 elem
             },
             Token::Number(n) => {

@@ -5,7 +5,7 @@ const END: char = '\0';
 pub enum Token {
     Number(f64),
     Plus, Minus, Multiply, Divide,
-    LeftParenthesis, RightParenthesis,
+    OpenParenthesis, CloseParenthesis,
     Fin
 }
 
@@ -65,11 +65,11 @@ impl Tokenizer {
                 },
                 '(' => {
                     self.advance();
-                    return Token::LeftParenthesis;
+                    return Token::OpenParenthesis;
                 },
                 ')' => {
                     self.advance();
-                    return Token::RightParenthesis;
+                    return Token::CloseParenthesis;
                 },
                 c if is_digit(&c) => {
                     return Token::Number(self.read_number());
@@ -127,6 +127,5 @@ pub fn get_tokens(input: &str) -> Vec<Token> {
 #[test]
 fn test() {
     let tokens = get_tokens("114 + .514 - (19.19 * (-8)) / 10");
-    // let tokens = get_tokens("-.1");
     println!("{:#?}", tokens);
 }
