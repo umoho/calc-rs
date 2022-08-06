@@ -1,4 +1,9 @@
-use crate::{parsing::Expression, lexeme::Token, decimal::Decimal};
+use crate::{
+    interpreter::{
+        parsing::Expression, lexeme::Token
+    },
+    number::decimal::Decimal
+};
 
 pub fn eval(expr: Expression) -> Decimal {
     match expr {

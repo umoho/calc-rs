@@ -1,4 +1,4 @@
-use crate::lexeme::Token;
+use crate::interpreter::lexeme::Token;
 
 #[derive(Debug)]
 pub enum Expression {
@@ -96,7 +96,7 @@ impl Parser {
 
 #[test]
 fn test() {
-    use crate::lexeme;
+    use crate::interpreter::lexeme;
     let examples: Vec<&str> = vec![
         "1",
         "1 * 2",

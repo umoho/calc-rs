@@ -1,9 +1,11 @@
-use crate::{lexeme::get_tokens, interpret::eval};
+use crate::interpreter::{
+    lexeme::get_tokens,
+    interpret::eval,
+    parsing::Parser
+};
 
-mod interpret;
-mod parsing;
-mod lexeme;
-mod decimal;
+mod number;
+mod interpreter;
 
 fn main() {
     println!("Calculator, version 0.1\n");
@@ -11,7 +13,7 @@ fn main() {
 
     if args.len() > 2 {
         let tokens = get_tokens(&args[2]);
-        let mut parser = parsing::Parser::new(tokens.clone());
+        let mut parser = Parser::new(tokens.clone());
         println!("Input: {}", args[2]);
         match args[1].as_str() {
             "--calc" | "-c" => {
@@ -40,7 +42,7 @@ fn shell() {
         }
 
         let tokens = get_tokens(cmd);
-        let mut parser = parsing::Parser::new(tokens.clone());
+        let mut parser = Parser::new(tokens.clone());
         println!(": {}", eval(parser.parse()))
     }
 }
