@@ -1,5 +1,5 @@
 use crate::interpreter::{
-    lexeme::get_tokens,
+    lexeme::{get_tokens, show_tokens},
     interpret::eval,
     parsing::Parser
 };
@@ -21,8 +21,8 @@ fn main() {
             "--calc" | "-c" => {
                     println!("Result: {}", eval(parser.parse()))
             },
-            "--lexeme" | "-l" => println!("Result: {:#?}", tokens),
-            "--tree" | "-t" => println!("Result: {:#?}", parser.parse()),
+            "--lexeme" | "-l" => println!("Result:\n{}", show_tokens(&tokens)),
+            "--tree" | "-t" => println!("Result: {}", parser.parse()),
             _ => { /* ignore */ }
         }
     }

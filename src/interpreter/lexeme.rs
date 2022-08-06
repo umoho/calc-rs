@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 const END: char = '\0';
 
 #[derive(Debug)]
@@ -25,7 +27,22 @@ fn test_token_partial_eq() {
     assert_ne!(Token::Number(0.0.to_string()), Token::Fin);
 }
 
-#[derive(Debug)]
+impl Display for Token {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let display = match self {
+            Token::Number(n) => format!("Number(\"{}\")", n),
+            other => format!("{:#?}", other),
+        };
+        write!(f, "{}", display)
+    }
+}
+
+#[test]
+fn test_token_display() {
+    println!("{}", Token::Number("114514".to_string()));
+    println!("{}", Token::Plus)
+}
+
 #[derive(Clone)]
 pub struct Tokenizer {
     text: String,
@@ -124,8 +141,26 @@ pub fn get_tokens(input: &str) -> Vec<Token> {
     tokens
 }
 
+pub fn show_tokens(tokens: &Vec<Token>) -> String {
+    let mut display = String::new();
+    if tokens.is_empty() { return display; }
+    for i in 0..tokens.len() {
+        let token = &tokens[i];
+        display += &token.to_string();
+        if i < tokens.len() - 1 {
+            display += "\n";
+        }
+    }
+    display
+}
+
 #[test]
 fn test() {
     let tokens = get_tokens("114 + .514 - (19.19 * (-8)) / 10");
     println!("{:#?}", tokens);
+    println!("[\n{}\n]", show_tokens(&tokens));
+
+    let tokens = get_tokens(".1");
+    println!("{:#?}", tokens);
+    println!("[\n{}\n]", show_tokens(&tokens));
 }

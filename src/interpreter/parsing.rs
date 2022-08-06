@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use crate::interpreter::lexeme::Token;
 
 #[derive(Debug)]
@@ -5,6 +7,12 @@ pub enum Expression {
     Number(String),
     Unary { op: Token, expr: Box<Expression> },
     Binary { op: Token, left: Box<Expression>, right: Box<Expression> },
+}
+
+impl Display for Expression {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:#?}", self)
+    }
 }
 
 pub struct Parser {
@@ -15,6 +23,7 @@ pub struct Parser {
 
 impl Parser {
     pub fn new(token_stream: Vec<Token>) -> Self {
+        if token_stream.is_empty() { panic!("Empty token stream"); }
         Self { position: 0, token_stream: token_stream.clone(), current_token: token_stream[0].clone() }
     }
 
@@ -95,6 +104,23 @@ impl Parser {
 }
 
 #[test]
+#[should_panic]
+fn test_parse_empty() {
+    use crate::interpreter::lexeme;
+    let examples: Vec<&str> = vec![
+        " ",
+        "",
+        "\n",
+        ];
+    for example in examples {
+        let ts = lexeme::get_tokens(example);
+        println!("{:?}", &ts);
+        let mut p = Parser::new(ts);
+        println!("Text: {:#?}\nExpr: {}\n", example, p.expr());
+    }
+}
+
+#[test]
 fn test() {
     use crate::interpreter::lexeme;
     let examples: Vec<&str> = vec![
@@ -108,6 +134,6 @@ fn test() {
     for example in examples {
         let ts = lexeme::get_tokens(example);
         let mut p = Parser::new(ts);
-        println!("Text: {}\nExpr: {:#?}\n", example, p.expr());
+        println!("Text: {:#?}\nExpr: {}\n", example, p.expr());
     }
 }
