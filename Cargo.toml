@@ -6,8 +6,15 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-libc = "0.2"
 
 [lib]
 name = "calc"
 crate-type = ["staticlib", "cdylib"]
+
+[profile.release]
+panic = "abort"
+opt-level = "z"
+strip = true
+lto = true
+codegen-units = 1
+
