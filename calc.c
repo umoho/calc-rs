@@ -4,9 +4,9 @@
 #include "calc.h"
 
 int main() {
-    char * const re = calculate("114514 / 50");
-
+    char * re = calculate("114514 / 50");
     printf("%s\n", re);
 
-    free(re);
+    free_result(re); // note that re is managed by rust, do not call free() on re!
+    re = NULL;
 }
