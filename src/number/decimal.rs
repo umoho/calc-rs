@@ -1,5 +1,23 @@
 use std::{ops::{Add, Sub, Neg, Mul, Div}, fmt::Display, cmp::max};
 
+pub fn simplify(origin: &Decimal) -> Decimal {
+    let mut int = origin.int;
+    let mut point = origin.point;
+    while int % 10 == 0 && point > 0 {
+        int /= 10;
+        point -= 1;
+    }
+    Decimal { int, point }
+}
+
+#[test]
+fn test_decimal_simplify() {
+    let origin = Decimal::_new(1140514000, 5);
+    println!("{:?}\n{0}", &origin);
+    let simplified = simplify(&origin);
+    println!("{:?}\n{0}", &simplified);
+}
+
 #[derive(Debug)]
 pub struct Decimal {
     int: i128,
@@ -37,14 +55,14 @@ impl From<String> for Decimal {
             point = num_vec[1].len() as u8;
         };
         if int == 0 { return Decimal::zero(); }
-        Decimal { int, point }
+        simplify(&Decimal { int, point })
     }
 }
 
 #[test]
 fn test_decimal_from() {
     let examples = vec![
-        0.0, 1.0, 1.14514, 2.333,
+        "0.0", "1.00", "1.14514", "2.333",
     ];
     for example in examples {
         let dec = Decimal::from(example.to_string());
@@ -115,11 +133,11 @@ impl Add for Decimal {
 #[test]
 fn test_decimal_add() {
     let examples = vec![
-        Decimal::_new(114000, 3) + Decimal::_new(514, 3),
+        Decimal::_new(1140000, 4) + Decimal::_new(514, 3),
         Decimal::_new(100, 1) + Decimal::_new(9, 1),
     ];
     for example in examples {
-        println!("Result: {}", &example);
+        println!("Data: {:?}\nResult: {0}\n", &example);
     }
 }
 
@@ -162,14 +180,6 @@ impl Mul for Decimal {
 #[test]
 fn test_decimal_mul() {
     let examples = vec![
-        /*
-        Decimal::_new(11, 1) * Decimal::_new(2, 0),
-        Decimal::_new(114, 2) * Decimal::_new(1, 1),
-        Decimal::_new(233, 3) * Decimal::_new(0, 1),
-        Decimal::_new(4, 1) * Decimal::_new(5, 0),
-        Decimal::_new(233, 0) * Decimal::_new(10, 0),
-        */
-        // Decimal::_new(2333, 3) * Decimal::_new(10, 0),
         Decimal::from(10.to_string()) * Decimal::from(2.333.to_string()),
     ];
     for example in examples {
@@ -201,15 +211,35 @@ impl Div for Decimal {
 
 #[test]
 fn test_decimal_div() {
-    let _result = Decimal::from(1.14.to_string()) / Decimal::from(10.to_string()); println!("{}", _result);
-    let _result = Decimal::from(23.3.to_string()) / Decimal::from(0.1.to_string()); println!("{}", _result);
-    let _result = Decimal::from(2333.to_string()) / Decimal::from(0.2.to_string()); println!("{}", _result);
+    let _result = Decimal::from(1.14.to_string()) / Decimal::from(10.to_string());
+    println!("{}", _result);
+    let _result = Decimal::from(23.3.to_string()) / Decimal::from(0.1.to_string());
+    println!("{}", _result);
+    let _result = Decimal::from(2333.to_string()) / Decimal::from(0.2.to_string());
+    println!("{}", _result);
 }
 
 #[test]
 #[should_panic]
 fn test_decimal_div_zero() {
-    let _result = Decimal::from(1.to_string()) / Decimal::from(0.to_string()); println!("{}", _result);
+    let _result = Decimal::from(1.to_string()) / Decimal::from(0.to_string());
+    println!("{}", _result);
+}
+
+impl PartialEq for Decimal {
+    fn eq(&self, other: &Self) -> bool {
+        let simplified_self = simplify(self);
+        let simplified_other = simplify(other);
+        simplified_self.int == simplified_other.int
+        &&
+        simplified_self.point == simplified_other.point
+    }
+}
+
+#[test]
+fn test_decimal_partial_eq() {
+    let _result = Decimal::from("1.00".to_string()) == Decimal::from("1".to_string());
+    println!("Result: {}", _result);
 }
 
 #[test]

@@ -7,8 +7,10 @@ use crate::interpreter::{
 mod number;
 mod interpreter;
 
+const VERSION: &str = "1.2";
+
 fn main() {
-    println!("Calculator, version 0.1\n");
+    println!("Calculator, version {}\n", VERSION);
     let args: Vec<String> = std::env::args().collect();
 
     if args.len() > 2 {
