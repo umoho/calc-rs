@@ -52,3 +52,8 @@ pub extern "C" fn tree(input_ptr: *const c_char) -> *const c_char {
     let result_cstr = CString::new(result).unwrap();
     result_cstr.into_raw()
 }
+
+#[no_mangle]
+pub unsafe extern "C" fn calc_free(ptr: *mut c_char) {
+    drop(CString::from_raw(ptr));
+}
