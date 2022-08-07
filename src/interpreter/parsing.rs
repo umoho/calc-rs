@@ -57,8 +57,26 @@ impl Parser {
         }
     }
 
-    fn term(&mut self) -> Expression {
+    fn power_term(&mut self) -> Expression {
         let mut node = self.factor();
+        while match self.current_token {  // condition
+            Token::Power => true,
+            _ => false
+        }
+        {  // repeat
+            let token = self.current_token.clone();
+            self.eat(token.clone());
+            node = Expression::Binary {
+                op: token,
+                left: Box::new(node),
+                right: Box::new(self.factor())
+            };
+        }
+        node
+    }
+
+    fn term(&mut self) -> Expression {
+        let mut node = self.power_term();
         while match self.current_token {  // condition
             Token::Multiply | Token::Divide => true,
             _ => false
@@ -69,7 +87,7 @@ impl Parser {
             node = Expression::Binary {
                 op: token,
                 left: Box::new(node),
-                right: Box::new(self.factor())
+                right: Box::new(self.power_term())
             };
         }
         node
@@ -104,6 +122,7 @@ fn test() {
         "1 / 2 * 3",
         "1 * 2 / 3",
         "-(114 * (5 + 1)) / 4",
+        "1 * 2 ^ (3 + 4)"
         ];
     for example in examples {
         let ts = lexeme::get_tokens(example);
