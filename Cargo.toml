@@ -7,6 +7,9 @@ edition = "2021"
 
 [lib]
 name = "calc"
-crate-type = ["cdylib"]
+crate-type = ["cdylib", "staticlib", "rlib"]
+
+[profile.release]
+lto = true
 
 [dependencies]
