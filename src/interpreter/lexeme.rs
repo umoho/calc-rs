@@ -7,6 +7,7 @@ const END: char = '\0';
 pub enum Token {
     Number(String),
     Plus, Minus, Multiply, Divide,
+    Power,
     OpenParenthesis, CloseParenthesis,
     Fin
 }
@@ -90,6 +91,10 @@ impl Tokenizer {
                 },
                 c if is_digit(&c) => {
                     return Token::Number(self.read_number());
+                },
+                '^' => {
+                    self.advance();
+                    return Token::Power;
                 },
                 '*' => {
                     self.advance();

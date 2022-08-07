@@ -23,6 +23,7 @@ pub fn eval(expr: Expression) -> Decimal {
                 Token::Minus => eval(*left) - eval(*right),
                 Token::Multiply => eval(*left) * eval(*right),
                 Token::Divide => eval(*left) / eval(*right),
+                Token::Power => eval(*left).pow(&eval(*right)),
                 _ => panic!("Wrong on calculating")
             }
         },

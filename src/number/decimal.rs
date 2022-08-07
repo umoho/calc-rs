@@ -37,9 +37,33 @@ impl Decimal {
         self.point == 0
     }
 
+    fn is_nonnegative(&self) -> bool {
+        self.int >= 0
+    }
+
     fn _new(int: i128, point: u8) -> Self {
         Self { int, point }
     }
+}
+
+impl Decimal {  // for `pow` function
+    pub fn pow(&self, rhs: &Self) -> Self {
+        match rhs {
+            r if r.is_nonnegative() && r.is_integer() => {
+                let int = self.int.pow(rhs.int as u32);
+                let point = self.point * 2;
+                Self { int, point }
+            },
+            // todo: other kind of exponents
+            _ => panic!("Only non-negative integer exponents are supported")
+        }
+    }
+}
+
+#[test]
+fn test_decimal_pow() {
+    let r = Decimal::from("2.1".to_string()).pow(&Decimal::from("2".to_string()));
+    println!("{r}");
 }
 
 impl From<String> for Decimal {
