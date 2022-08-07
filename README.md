@@ -48,7 +48,6 @@ to build the binary.
 
 ## FFI
 
-Foreign function interface for the C programming language, has 3 function:
-`calculate`, `lexeme` and `tree`, just like the command-line arguments in `Usage`.
+Foreign function interface for the C programming language, has 4 functions.
 
-For more information, please read `src/lib.rs`.
+For more information, please view `src/lib.rs`.
