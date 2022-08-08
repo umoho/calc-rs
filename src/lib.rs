@@ -29,8 +29,11 @@ fn exec(input: &str, mode: Mode) -> String {
     }
 }
 
+// ---- C FFI ----
+
 #[no_mangle]
-pub extern "C" fn calculate(input_ptr: *const c_char) -> *const c_char {
+#[cfg(feature="ffi")]
+pub extern "C" fn calc_calculate(input_ptr: *const c_char) -> *const c_char {
     let input = unsafe { CStr::from_ptr(input_ptr) }.to_str().unwrap();
     let result = exec(input, Mode::Calculate);
     let result_cstr = CString::new(result).unwrap();
@@ -38,7 +41,8 @@ pub extern "C" fn calculate(input_ptr: *const c_char) -> *const c_char {
 }
 
 #[no_mangle]
-pub extern "C" fn lexeme(input_ptr: *const c_char) -> *const c_char {
+#[cfg(feature="ffi")]
+pub extern "C" fn calc_lexeme(input_ptr: *const c_char) -> *const c_char {
     let input = unsafe { CStr::from_ptr(input_ptr) }.to_str().unwrap();
     let result = exec(input, Mode::Lexeme);
     let result_cstr = CString::new(result).unwrap();
@@ -46,7 +50,8 @@ pub extern "C" fn lexeme(input_ptr: *const c_char) -> *const c_char {
 }
 
 #[no_mangle]
-pub extern "C" fn tree(input_ptr: *const c_char) -> *const c_char {
+#[cfg(feature="ffi")]
+pub extern "C" fn calc_tree(input_ptr: *const c_char) -> *const c_char {
     let input = unsafe { CStr::from_ptr(input_ptr) }.to_str().unwrap();
     let result = exec(input, Mode::Tree);
     let result_cstr = CString::new(result).unwrap();
@@ -54,6 +59,21 @@ pub extern "C" fn tree(input_ptr: *const c_char) -> *const c_char {
 }
 
 #[no_mangle]
+#[cfg(feature="ffi")]
 pub unsafe extern "C" fn calc_free(ptr: *mut c_char) {
     drop(CString::from_raw(ptr));
+}
+
+// ---- Rust lib ----
+
+pub fn calculate(input: String) -> String {
+    exec(&input, Mode::Calculate)
+}
+
+pub fn lexeme(input: String) -> String {
+    exec(&input, Mode::Lexeme)
+}
+
+pub fn tree(input: String) -> String {
+    exec(&input, Mode::Tree)
 }
