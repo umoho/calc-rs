@@ -66,14 +66,14 @@ pub unsafe extern "C" fn calc_free(ptr: *mut c_char) {
 
 // ---- Rust lib ----
 
-pub fn calculate(input: String) -> String {
-    exec(&input, Mode::Calculate)
+pub fn calculate(input: &str) -> String {
+    exec(input, Mode::Calculate)
 }
 
-pub fn lexeme(input: String) -> String {
-    exec(&input, Mode::Lexeme)
+pub fn lexeme(input: &str) -> String {
+    exec(input, Mode::Lexeme)
 }
 
-pub fn tree(input: String) -> String {
-    exec(&input, Mode::Tree)
+pub fn tree(input: &str) -> String {
+    exec(input, Mode::Tree)
 }
