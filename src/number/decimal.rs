@@ -51,7 +51,7 @@ impl Decimal {  // for `pow` function
         match rhs {
             r if r.is_nonnegative() && r.is_integer() => {
                 let int = self.int.pow(rhs.int as u32);
-                let point = self.point * 2;
+                let point = self.point * r.int as u8;
                 Self { int, point }
             },
             // todo: other kind of exponents
@@ -62,8 +62,18 @@ impl Decimal {  // for `pow` function
 
 #[test]
 fn test_decimal_pow() {
-    let r = Decimal::from("2.1".to_string()).pow(&Decimal::from("2".to_string()));
-    println!("{r}");
+    let examples = vec![
+        Decimal::from("2".to_string()).pow(&Decimal::from("8".to_string())),
+        Decimal::from("0.1".to_string()).pow(&Decimal::from("4".to_string())),
+        Decimal::from("0.002".to_string()).pow(&Decimal::from("4".to_string())),
+        Decimal::from("2.1".to_string()).pow(&Decimal::from("4".to_string())),
+        Decimal::from("0.00".to_string()).pow(&Decimal::from("4".to_string())),
+        Decimal::from("0.233".to_string()).pow(&Decimal::from("1".to_string())),
+        Decimal::from("0.002".to_string()).pow(&Decimal::from("0".to_string())),
+    ];
+    for example in examples {
+        println!("Result: {}", example);
+    }
 }
 
 impl From<String> for Decimal {
